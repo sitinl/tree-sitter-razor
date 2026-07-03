@@ -11,7 +11,12 @@ export default grammar({
   name: "razor",
 
   rules: {
-    // TODO: add the actual grammar rules
-    source_file: $ => "hello"
+    source_file: $ => repeat($._node),
+
+        _node: $ => choice(
+            $.text
+        ),
+
+        text: $ => /[^<@]+/
   }
 });
