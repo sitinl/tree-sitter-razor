@@ -14,9 +14,16 @@ export default grammar({
     source_file: $ => repeat($._node),
 
         _node: $ => choice(
-            $.text
+            $.text,
+            $.tag
         ),
 
-        text: $ => /[^<@]+/
+        text: $ => /[^<@]+/,
+        tag: $ => seq(
+          '<',
+          /[^>]+/,
+          '>'
+        )
+        
   }
 });
