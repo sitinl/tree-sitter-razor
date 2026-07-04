@@ -89,15 +89,17 @@ export default grammar({
             )
           ),
 
-       member_access: $ =>
-          seq(
-              $.identifier,
-              repeat1(
-                  seq(
-                      ".",
-                      $.identifier
-                  )
+
+        member_access: $ =>
+          prec.left(
+              seq(
+                  choice(
+                      $.identifier,
+                      $.member_access
+                  ),
+                  ".",
+                  $.identifier
               )
           ),
-    }
+    } 
 });
