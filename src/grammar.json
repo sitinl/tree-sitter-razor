@@ -14,19 +14,35 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "text"
+          "name": "element"
         },
         {
           "type": "SYMBOL",
-          "name": "tag"
+          "name": "text"
         }
       ]
     },
-    "text": {
-      "type": "PATTERN",
-      "value": "[^<@]+"
+    "element": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "start_tag"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_tag"
+        }
+      ]
     },
-    "tag": {
+    "start_tag": {
       "type": "SEQ",
       "members": [
         {
@@ -34,14 +50,39 @@
           "value": "<"
         },
         {
-          "type": "PATTERN",
-          "value": "[^>]+"
+          "type": "SYMBOL",
+          "name": "tag_name"
         },
         {
           "type": "STRING",
           "value": ">"
         }
       ]
+    },
+    "end_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "</"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tag_name"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
+    },
+    "tag_name": {
+      "type": "PATTERN",
+      "value": "[A-Za-z][A-Za-z0-9-]*"
+    },
+    "text": {
+      "type": "PATTERN",
+      "value": "[^<@]+"
     }
   },
   "extras": [
