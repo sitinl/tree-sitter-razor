@@ -83,10 +83,7 @@ export default grammar({
         razor_expression: $ =>
           seq(
             "@",
-            choice(
-                $.member_access,
-                $.identifier
-            )
+            $.expression
           ),
 
 
@@ -100,6 +97,20 @@ export default grammar({
                   ".",
                   $.identifier
               )
+          ),
+
+        parenthesized_expression: $ =>
+          seq(
+              "(",
+              $.expression, 
+              ")"
+          ),
+        
+        expression: $ =>
+          choice(
+              $.member_access,
+              $.identifier,
+              $.parenthesized_expression,
           ),
     } 
 });
