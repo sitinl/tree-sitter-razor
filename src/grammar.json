@@ -14,20 +14,28 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "element"
+          "name": "razor_model_directive"
         },
         {
           "type": "SYMBOL",
-          "name": "text"
+          "name": "razor_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "html_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "html_text"
         }
       ]
     },
-    "element": {
+    "html_element": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "start_tag"
+          "name": "html_start_tag"
         },
         {
           "type": "REPEAT",
@@ -38,11 +46,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "end_tag"
+          "name": "html_end_tag"
         }
       ]
     },
-    "start_tag": {
+    "html_start_tag": {
       "type": "SEQ",
       "members": [
         {
@@ -54,12 +62,19 @@
           "name": "tag_name"
         },
         {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute"
+          }
+        },
+        {
           "type": "STRING",
           "value": ">"
         }
       ]
     },
-    "end_tag": {
+    "html_end_tag": {
       "type": "SEQ",
       "members": [
         {
@@ -80,9 +95,144 @@
       "type": "PATTERN",
       "value": "[A-Za-z][A-Za-z0-9-]*"
     },
-    "text": {
+    "attribute": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "attribute_name"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "attribute_value"
+        }
+      ]
+    },
+    "attribute_name": {
       "type": "PATTERN",
-      "value": "[^<@]+"
+      "value": "[A-Za-z_:][-A-Za-z0-9_:.]*"
+    },
+    "attribute_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\""
+            },
+            {
+              "type": "PATTERN",
+              "value": "[^\"]*"
+            },
+            {
+              "type": "STRING",
+              "value": "\""
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "'"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[^']*"
+            },
+            {
+              "type": "STRING",
+              "value": "'"
+            }
+          ]
+        }
+      ]
+    },
+    "html_text": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^<@.]+"
+      }
+    },
+    "razor_model_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@model"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_name"
+        }
+      ]
+    },
+    "type_name": {
+      "type": "PATTERN",
+      "value": "[A-Za-z_][A-Za-z0-9_.<>]*"
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[A-Za-z_][A-Za-z0-9_]*"
+    },
+    "razor_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "member_access"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          ]
+        }
+      ]
+    },
+    "member_access": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        }
+      ]
     }
   },
   "extras": [

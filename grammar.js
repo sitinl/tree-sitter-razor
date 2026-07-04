@@ -15,25 +15,28 @@ export default grammar({
 
         _node: $ =>
             choice(
-                $.element,
-                $.text,
+                $.razor_model_directive,
+                $.razor_expression,
+                $.html_element,
+                $.html_text,
             ),
 
-        element: $ =>
+        html_element: $ =>
             seq(
-                $.start_tag,
+                $.html_start_tag,
                 repeat($._node),
-                $.end_tag,
+                $.html_end_tag,
             ),
 
-        start_tag: $ =>
+        html_start_tag: $ =>
             seq(
                 "<",
                 $.tag_name,
+                repeat($.attribute),
                 ">",
             ),
 
-        end_tag: $ =>
+        html_end_tag: $ =>
             seq(
                 "</",
                 $.tag_name,
@@ -43,7 +46,58 @@ export default grammar({
         tag_name: $ =>
             /[A-Za-z][A-Za-z0-9-]*/,
 
-        text: $ =>
-            /[^<@]+/,
+       attribute: $ =>
+         seq(
+             $.attribute_name,
+             "=",
+             $.attribute_value,
+         ),
+    
+        attribute_name: $ =>
+            /[A-Za-z_:][-A-Za-z0-9_:.]*/,
+        
+        attribute_value: $ =>
+            choice(
+                seq('"', /[^"]*/, '"'),
+                seq("'", /[^']*/, "'"),
+            ),
+
+        html_text: $ =>
+          token(
+            /[^<@.]+/
+          ),
+
+        razor_model_directive: $ =>
+          seq(
+              "@model",
+              /\s+/,
+              $.type_name,
+          ),
+
+        type_name: $ =>
+          /[A-Za-z_][A-Za-z0-9_.<>]*/,
+
+        identifier: _ =>
+          /[A-Za-z_][A-Za-z0-9_]*/,
+        
+        razor_expression: $ =>
+          seq(
+            "@",
+            choice(
+                $.member_access,
+                $.identifier
+            )
+          ),
+
+       member_access: $ =>
+          seq(
+              $.identifier,
+              repeat1(
+                  seq(
+                      ".",
+                      $.identifier
+                  )
+              )
+          ),
     }
 });
